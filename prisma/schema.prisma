@@ -12,7 +12,7 @@ model Todo{
   id Int                @id @default(autoincrement())
   user_id Int
   title String
-  discription String
+  description String?
   status Boolean @default(false)
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt

@@ -27,8 +27,21 @@ export class UsersService {
     return this.getUser(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.prismaService.user.update({ where: {id}, data: updateUserDto});
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.getUser(id);
+
+    if(updateUserDto.email){
+      await this.checkIfUserEmailExists(updateUserDto.email, id);
+    }
+
+    if(updateUserDto.mobile){
+      await this.checkIfUserMobileExists(updateUserDto.mobile, id);
+    }
+
+    if (updateUserDto.password && user.password !== updateUserDto.password){
+      updateUserDto.password = await hash(updateUserDto.password, 10);
+    }
+    return this.prismaService.user.update({where: { id },data: updateUserDto,});
   }
 
   async remove(id: number) {
